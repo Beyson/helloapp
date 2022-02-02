@@ -1,6 +1,9 @@
 # helloapp
 
-A new Flutter project.
+This is a flutter application powered by getStream framework that provides a Main Function you'd expect from a chat, such emojis and private/group messages.
+
+<img src="https://i.ibb.co/LPS61Ty/Capture2app.png"  alt="chat">&nbsp;&nbsp;&nbsp;<img src="https://i.ibb.co/gR99c4Z/Captureapp1.png" alt="contacts">
+
 
 ## Getting Started
 
