@@ -6,7 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 void main(){
-  IniciarConexion("beyson2");
+  runApp(
+      const MyApp()
+  );
 }
 
 void IniciarConexion(String usuarioID) async{
@@ -53,7 +55,7 @@ void IniciarConexion(String usuarioID) async{
     state: true,
   );*/
 
-  runApp( MyApp(
+  runApp( Index(
     client: client,
     userID: usuarioID,
   )
@@ -62,11 +64,25 @@ void IniciarConexion(String usuarioID) async{
 
 class MyApp extends StatelessWidget {
  // final Channel channel;
-  final StreamChatClient client;
-  final String userID;
-  const MyApp({Key? key, required this.client,/* required this.channel,*/ required this.userID}) : super(key: key);
+
+  const MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      //home:  ChannelListPage(userID: userID,),
+      //  home: UsersListPage(),
+          home: MyHomePage(title: 'Login',),
+    );
+  }
+}
+
+class Index extends StatelessWidget{
+  final StreamChatClient client;
+  final String userID;
+  const Index({Key? key, required this.client,/* required this.channel,*/ required this.userID}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -76,11 +92,10 @@ class MyApp extends StatelessWidget {
             child: child);
       },
       home:  ChannelListPage(userID: userID,),
-      //  home: UsersListPage(),
-
     );
   }
 }
+
 class ChannelPage extends StatelessWidget{
   const ChannelPage({Key? key}) : super(key: key);
   @override
@@ -113,14 +128,11 @@ class ChannelListPage extends StatelessWidget{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-      title:  Text("Hello!")
+      title:  const Text("Hello!")
       ),
       body: ChannelsBloc(
         child: ChannelListView(
          // filter: Filter.in_('members', [StreamChat.of(context).currentUser!.id]),
-          pagination: PaginationParams(
-            limit: 20,
-          ),
           sort: const [SortOption('last_message_at')],
           channelWidget: const ChannelPage(),
         ),
@@ -164,21 +176,23 @@ class ThreadPage extends StatelessWidget{
 }
 
 class UsersListPage extends StatelessWidget {
+  const UsersListPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          title:  const Text("Contactos")
+      ),
       body: UsersBloc(
         child: UserListView(
           filter: Filter.notEqual('id', StreamChat.of(context).user!.id),
-          sort: [
+          sort: const [
             SortOption(
               'name',
               direction: 1,
             ),
           ],
-          pagination: PaginationParams(
-            limit: 25,
-          ),
          /* onUserTap: (user,_){
             final channel = client.channel(
               "messaging",
@@ -208,6 +222,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late String user;
 
+  final textUserController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
 
@@ -226,17 +242,12 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                child: TextFormField(
+                child: TextField(
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: 'Ingresa tu nombre',
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor ingresa tu nombre';
-                    }
-                    return null;
-                  },
+                  controller: textUserController,
                 ),
               ),
               Row(
@@ -246,7 +257,13 @@ class _MyHomePageState extends State<MyHomePage> {
                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
                      child: ElevatedButton(
                          onPressed: () {
-
+                            if(textUserController.text.isNotEmpty){
+                              /*Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) =>  MyApp()),
+                              );*/
+                              IniciarConexion(textUserController.text);
+                            }
                          },
                          child: const Text('Entrar')
                      ),
